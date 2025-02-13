@@ -1,0 +1,70 @@
+-- Создание таблицы "Члены семьи"
+CREATE TABLE FamilyMembers (
+    member_id SERIAL PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL UNIQUE,
+    birth_date DATE NOT NULL
+);
+
+-- Создание таблицы "Категории товаров"
+CREATE TABLE Categories (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- Создание таблицы "Товары/услуги"
+CREATE TABLE Products (
+    product_id SERIAL PRIMARY KEY,
+    product_name VARCHAR(255) NOT NULL UNIQUE,
+    category_id INTEGER REFERENCES Categories(category_id),
+    unit_price NUMERIC(10,2) NOT NULL
+);
+
+-- Создание таблицы "Работа"
+CREATE TABLE Jobs (
+    job_id SERIAL PRIMARY KEY,
+    member_id INTEGER REFERENCES FamilyMembers(member_id),
+    position VARCHAR(255) NOT NULL,
+    organization VARCHAR(255) NOT NULL,
+    salary NUMERIC(10,2) NOT NULL,
+    start_date DATE NOT NULL
+);
+
+-- Создание таблицы "Расходы"
+CREATE TABLE Expenses (
+    expense_id SERIAL PRIMARY KEY,
+    purchase_date TIMESTAMP NOT NULL,
+    member_id INTEGER REFERENCES FamilyMembers(member_id),
+    product_id INTEGER REFERENCES Products(product_id),
+    quantity INTEGER NOT NULL
+);
+
+
+INSERT INTO FamilyMembers (full_name, birth_date) VALUES
+('Иванов Иван Петрович', '1985-06-15'),
+('Иванова Мария Сергеевна', '1987-09-20'),
+('Иванов Алексей Иванович', '2010-02-05'),
+('Иванова Елена Викторовна', '1959-03-10'),
+('Петров Сергей Александрович', '1982-12-05');
+
+
+INSERT INTO Categories (category_name) VALUES
+('Продукты'),
+('Транспорт'),
+('Развлечения'),
+('Одежда');
+
+
+INSERT INTO Products (product_name, category_id, unit_price) VALUES
+('Хлеб', (SELECT category_id FROM Categories WHERE category_name = 'Продукты'), 50),
+('Молоко', (SELECT category_id FROM Categories WHERE category_name = 'Продукты'), 80),
+('Бензин', (SELECT category_id FROM Categories WHERE category_name = 'Транспорт'), 80),
+('Билет в кино', (SELECT category_id FROM Categories WHERE category_name = 'Развлечения'), 300),
+('Зимнее пальто', (SELECT category_id FROM Categories WHERE category_name = 'Одежда'), 8500);
+
+
+INSERT INTO Jobs (member_id, position, organization, salary, start_date) VALUES
+((SELECT member_id FROM FamilyMembers WHERE full_name = 'Иванов Иван Петрович'), 'Инженер', 'ООО "ТехноСервис"', 85000, '2015-03-01'),
+((SELECT member_id FROM FamilyMembers WHERE full_name = 'Иванова Мария Сергеевна'), 'Бухгалтер', 'АО "ФинансГрупп"', 75000, '2012-04-15'),
+((SELECT member_id FROM FamilyMembers WHERE full_name = 'Иванова Елена Викторовна'), 'Репетитор', 'Частная практика', 15000, '2020-01-10'),
+((SELECT member_id FROM FamilyMembers WHERE full_name = 'Петров Сергей Александрович'), 'Таксист', 'Индивидуальная работа', 30000, '2020-09-01');
+

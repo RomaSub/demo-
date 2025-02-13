@@ -1,0 +1,41 @@
+.family-member-card {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin: 10px 0;
+}
+.family-member-card:hover {
+  background-color: #B11AED;
+  cursor: pointer;
+}
+
+.member-info {
+  flex: 1;
+}
+
+.budget-status {
+  flex: 1;
+  text-align: right;
+}
+
+.page-heading {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.page-logo {
+  width: 100px;
+  height: 100px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
