@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
+
 export default function UpdateFamilyMember() {
   const location = useLocation();
   const [familyMember, setFamilyMember] = useState(location.state.member);
@@ -11,7 +12,7 @@ export default function UpdateFamilyMember() {
     const updatedMember = {
       member_id: familyMember.member_id,
       full_name: e.target.full_name.value,
-      birth_date: e.target.birth_date.value,
+      birth_date: e.target.birth_date.value, 
       current_position: e.target.current_position.value,
       workplace: e.target.workplace.value,
       total_income: parseFloat(e.target.total_income.value),

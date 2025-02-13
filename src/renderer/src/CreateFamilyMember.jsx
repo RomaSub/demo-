@@ -5,7 +5,7 @@ export default function CreateFamilyMember() {
     e.preventDefault();
     const newMember = {
       full_name: e.target.full_name.value,
-      birth_date: e.target.birth_date.value,
+      birth_date: e.target.birth_date.value, 
       current_position: e.target.current_position.value,
       workplace: e.target.workplace.value,
       total_income: parseFloat(e.target.total_income.value),

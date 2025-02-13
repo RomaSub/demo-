@@ -71,34 +71,10 @@ async function createFamilyMember(newMember) {
     newMember;
 
   try {
-    await global.dbclient.query("BEGIN");
-
-    const memberRes = await global.dbclient.query(
-      `INSERT INTO FamilyMembers (full_name, birth_date) 
-       VALUES ($1, $2) 
-       RETURNING member_id`,
-      [full_name, birth_date],
-    );
-
-    const memberId = memberRes.rows[0].member_id;
-
-    await global.dbclient.query(
-      `INSERT INTO Jobs (member_id, position, organization, salary, start_date)
-       VALUES ($1, $2, $3, $4, CURRENT_DATE)`,
-      [
-        memberId,
-        current_position || "Безработный",
-        workplace || "-",
-        total_income || 0,
-      ],
-    );
-
-    await global.dbclient.query("COMMIT");
-
+    // доделать
     dialog.showMessageBox({ message: "Успех! Член семьи создан" });
   } catch (e) {
     consol.log(e);
-    await global.dbclient.query("ROLLBACK");
 
     if (e.code === "23505") {
       dialog.showErrorBox("Ошибка", "Член семьи с таким именем уже существует");
@@ -112,64 +88,16 @@ async function createFamilyMember(newMember) {
 }
 
 async function updateFamilyMember(updatedMember) {
-  const {
-    member_id,
-    full_name,
-    birth_date,
-    current_position,
-    workplace,
-    total_income,
-  } = updatedMember;
+  const { id, full_name, birth_date } = member;
 
   try {
-    await global.dbclient.query("BEGIN");
-
-    await global.dbclient.query(
-      `UPDATE FamilyMembers
-       SET full_name = $1, birth_date = $2
-       WHERE member_id = $3`,
-      [full_name, birth_date, member_id],
-    );
-
-    const lastJobRes = await global.dbclient.query(
-      `SELECT job_id FROM Jobs 
-       WHERE member_id = $1 
-       ORDER BY start_date DESC 
-       LIMIT 1`,
-      [member_id],
-    );
-
-    if (lastJobRes.rows.length > 0) {
-      await global.dbclient.query(
-        `UPDATE Jobs
-         SET position = $1, organization = $2, salary = $3
-         WHERE job_id = $4`,
-        [
-          current_position || "Безработный",
-          workplace || "-",
-          total_income,
-          lastJobRes.rows[0].job_id,
-        ],
-      );
-    } else {
-      await global.dbclient.query(
-        `INSERT INTO Jobs (member_id, position, organization, salary, start_date)
-         VALUES ($1, $2, $3, $4, CURRENT_DATE)`,
-        [
-          member_id,
-          current_position || "Безработный",
-          workplace || "-",
-          total_income,
-        ],
-      );
-    }
-
-    await global.dbclient.query("COMMIT");
-
+    await global.dbclient.query(`UPDATE family_members
+      SET full_name = '${full_name}'
+      WHERE id = ${id};`);
     dialog.showMessageBox({ message: "Успех! Данные обновлены" });
+    return;
   } catch (e) {
     consol.log(e);
-    await global.dbclient.query("ROLLBACK");
 
     if (e.code === "23505") {
       dialog.showErrorBox("Ошибка", "Член семьи с таким именем уже существует");
